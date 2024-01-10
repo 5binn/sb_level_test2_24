@@ -1,6 +1,29 @@
-<h3 th:text="${article.title}"></h3>
-<p th:text="${article.content}"></p>
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
 
-<a th:href="@{/article/list}">목록</a>
+    <div class="h3" th:text="${article.title}"></div>
 
-<button TYPE="submit">게시판</button>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="border-bottom my-3 py-2" th:utext="${@commonUtil.markdown(article.content)}"></h5>
+            <p class="badge text-bg-light"
+               th:if="${article.author != null}" th:text="${article.author.username}"></p>
+            <p class="badge text-bg-light"
+               th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:MM')}"></p>
+        </div>
+    </div>
+    <div>
+        <a th:href="@{|/article/modify/${article.id}|}" class="btn btn-secondary btn-sm"
+           sec:authorize="isAuthenticated()"
+           th:if="${article.author != null and #authentication.getPrincipal().getUsername() == article.author.username}"
+        >수정</a>
+        <a th:href="@{|/article/delete/${article.id}|}" class="btn btn-secondary btn-sm"
+           sec:authorize="isAuthenticated()"
+           th:if="${article.author != null and #authentication.getPrincipal().getUsername() == article.author.username}"
+        >삭제</a>
+    </div>
+    <br>
+    <a href="/article/list" class="btn btn-primary btn-sm">목록</a>
+
+</div>
+</html>
